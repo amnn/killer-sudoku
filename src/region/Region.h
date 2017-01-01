@@ -8,10 +8,10 @@
 namespace region {
 
   struct Region {
-    bool isConstrained;
-    uint8_t constraint;
-    uint8_t row;
-    uint8_t col;
+    const bool isConstrained;
+    const uint8_t constraint;
+    const uint8_t row;
+    const uint8_t col;
 
     Region(uint8_t constraint, uint8_t row, uint8_t col)
       : isConstrained { true }
@@ -22,6 +22,7 @@ namespace region {
 
     Region(uint8_t row, uint8_t col)
       : isConstrained { false }
+      , constraint { 0 }
       , row { row }
       , col { col }
     {}
