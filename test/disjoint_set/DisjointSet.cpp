@@ -6,7 +6,7 @@ using namespace disjoint_set;
 
 namespace {
   struct Adder {
-    inline uint8_t operator()(uint8_t &x, uint8_t &y) const
+    inline uint8_t operator()(const uint8_t &x, const uint8_t &y) const
     {
       return x + y;
     }

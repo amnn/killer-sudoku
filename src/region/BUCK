@@ -1,0 +1,15 @@
+cxx_library(
+  name = 'region',
+  header_namespace = 'region',
+  exported_headers = glob(['**/*.h']),
+
+  deps = [
+    '//src/disjoint_set:disjoint_set',
+  ],
+
+  tests = [
+    '//test/region:region',
+  ],
+
+  visibility = ['PUBLIC'],
+)

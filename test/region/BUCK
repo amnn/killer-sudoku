@@ -1,0 +1,10 @@
+cxx_test(
+  name = 'region',
+  srcs = glob(['*.cpp']),
+
+  deps = [
+    '//src/region:region',
+  ],
+
+  visibility = ['PUBLIC'],
+)
