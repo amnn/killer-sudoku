@@ -2,8 +2,4 @@ cxx_binary(
   name = 'kss',
   srcs = glob(['**/*.cpp']),
   headers = glob(['**/*.h']),
-  compiler_flags = [
-    '-Wall',
-    '-Werror',
-  ]
 )

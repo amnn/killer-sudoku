@@ -1,0 +1,10 @@
+cxx_test(
+  name = 'disjoint_set',
+  srcs = glob(['*.cpp']),
+
+  deps = [
+    '//src/disjoint_set:disjoint_set',
+  ],
+
+  visibility = ['PUBLIC'],
+)

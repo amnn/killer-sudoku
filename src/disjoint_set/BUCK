@@ -1,0 +1,11 @@
+cxx_library(
+  name = 'disjoint_set',
+  header_namespace = 'disjoint_set',
+  exported_headers = glob(['**/*.h']),
+
+  tests = [
+    '//test/disjoint_set:disjoint_set',
+  ],
+
+  visibility = ['PUBLIC'],
+)

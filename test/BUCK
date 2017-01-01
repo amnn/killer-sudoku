@@ -1,4 +1,0 @@
-cxx_test(
-  name = 'test',
-  srcs = glob(['*.cpp']),
-)
