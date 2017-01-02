@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <disjoint_set/DisjointSet.h>
+#include <disjoint_set/Arena.h>
 
 using namespace disjoint_set;
 
@@ -15,19 +15,23 @@ namespace {
 
 TEST(DisjointSetTest, Dereference)
 {
-  Set<uint8_t> s(42);
+  Arena<uint8_t> a;
+  auto &s = *a.newSet(42);
   EXPECT_EQ(42, *s);
 }
 
 TEST(DisjointSetTest, FindSelf)
 {
-  Set<uint8_t> s(42);
+  Arena<uint8_t> a;
+  auto &s = *a.newSet(42);
   EXPECT_EQ(&s, s.find());
 }
 
 TEST(DisjointSetTest, Union)
 {
-  Set<uint8_t> s(1), t(2);
+  Arena<uint8_t> a;
+  auto &s = *a.newSet(1);
+  auto &t = *a.newSet(2);
   s += t;
 
   EXPECT_EQ(s.find(), t.find());
@@ -35,7 +39,8 @@ TEST(DisjointSetTest, Union)
 
 TEST(DisjointSetTest, UnionSelf)
 {
-  Set<uint8_t> s(1);
+  Arena<uint8_t> a;
+  auto &s = *a.newSet(1);
   auto p = s.find();
   s += s;
 
@@ -43,8 +48,12 @@ TEST(DisjointSetTest, UnionSelf)
 }
 
 TEST(DisjointSetTest, Merging) {
-  Set<uint8_t, Adder> s(18), t(24);
+  Arena<uint8_t, Adder> a;
+  auto &s = *a.newSet(18);
+  auto &t = *a.newSet(24);
   s += t;
 
-  EXPECT_EQ(42, **s.find());
+  auto &p = *s.find();
+
+  EXPECT_EQ(42, *p);
 }

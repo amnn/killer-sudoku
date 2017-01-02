@@ -4,22 +4,8 @@
 
 namespace disjoint_set {
 
-template <typename T>
-struct Fst {
-  inline T operator()(const T &t, const T &) const
-  {
-    return t;
-  }
-};
-
-template < typename T, typename Merger = Fst<T> >
+template <typename T, typename Merger>
 struct Set {
-
-  Set(T &&val)
-    : parent { this }
-    , rank { 0 }
-    , val {std::forward<T>(val)}
-  {}
 
   // Can't copy or move Sets (to preserve pointers).
   Set(const Set &) = delete;
@@ -69,10 +55,20 @@ struct Set {
   }
 
 private:
+  // Constructor is private so that it can only be constructed from within a
+  // `disjoint_set::Arena`.
+  Set(T &&val)
+    : parent { this }
+    , rank { 0 }
+    , val {std::forward<T>(val)}
+  {}
+
   Set *parent;
   uint32_t rank;
   T val;
 
+  template <typename U, typename M>
+  friend class Arena;
 };
 
 } // namespace disjoint_set
