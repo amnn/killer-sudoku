@@ -11,6 +11,32 @@ namespace {
       return x + y;
     }
   };
+
+  struct Traced {
+
+    Traced(uint32_t &moves, uint32_t &destroys)
+      : moves {moves}
+      , destroys {destroys}
+    {}
+
+    Traced(Traced &&traced)
+      : moves {traced.moves}
+      , destroys {traced.destroys}
+    {
+      moves++;
+    }
+
+    Traced(const Traced &) = delete;
+    Traced &operator =(const Traced &) = delete;
+
+    ~Traced()
+    {
+      destroys++;
+    }
+
+  private:
+    uint32_t &moves, &destroys;
+  };
 }
 
 TEST(DisjointSetTest, Dereference)
@@ -56,4 +82,17 @@ TEST(DisjointSetTest, Merging) {
   auto &p = *s.find();
 
   EXPECT_EQ(42, *p);
+}
+
+TEST(DisjointSetTest, ArenaLifetime) {
+  uint32_t moves = 0, destroys = 0;
+  {
+    Arena<Traced> a;
+    a.newSet(Traced {moves, destroys});
+    a.newSet(Traced {moves, destroys});
+
+    EXPECT_EQ(moves, destroys);
+  }
+
+  EXPECT_EQ(moves + 2, destroys);
 }
