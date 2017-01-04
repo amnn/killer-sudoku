@@ -8,12 +8,12 @@
 namespace region {
 
   struct Region {
-    const bool isConstrained;
-    const uint8_t constraint;
-    const uint8_t row;
-    const uint8_t col;
+    bool isConstrained;
+    uint16_t constraint;
+    uint8_t row;
+    uint8_t col;
 
-    Region(uint8_t constraint, uint8_t row, uint8_t col)
+    Region(uint16_t constraint, uint8_t row, uint8_t col)
       : isConstrained { true }
       , constraint { constraint }
       , row { row }
@@ -29,6 +29,11 @@ namespace region {
 
     bool operator ==(const Region &that) const {
       return memcmp(this, &that, sizeof(Region)) == 0;
+    }
+
+    void setConstraint(uint16_t c) {
+      this->isConstrained = true;
+      this->constraint = c;
     }
   };
 

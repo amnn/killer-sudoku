@@ -18,6 +18,11 @@ struct Set {
     return this->val;
   }
 
+  T *operator ->()
+  {
+    return &this->val;
+  }
+
   Set *find()
   {
     if (this != parent) {
