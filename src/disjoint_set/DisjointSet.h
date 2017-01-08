@@ -15,12 +15,12 @@ struct Set {
 
   T &operator *()
   {
-    return this->val;
+    return find()->val;
   }
 
   T *operator ->()
   {
-    return &this->val;
+    return &find()->val;
   }
 
   Set *find()
