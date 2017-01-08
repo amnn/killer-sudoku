@@ -27,13 +27,15 @@ namespace region {
       , col { col }
     {}
 
-    bool operator ==(const Region &that) const {
+    bool operator ==(const Region &that) const
+    {
       return memcmp(this, &that, sizeof(Region)) == 0;
     }
 
-    void setConstraint(uint16_t c) {
-      this->isConstrained = true;
-      this->constraint = c;
+    void setConstraint(uint16_t c)
+    {
+      isConstrained = true;
+      constraint = c;
     }
   };
 
