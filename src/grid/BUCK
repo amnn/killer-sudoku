@@ -1,0 +1,17 @@
+cxx_library(
+  name = 'grid',
+  srcs = glob(['**/*.cpp']),
+  header_namespace = 'grid',
+  exported_headers = glob(['**/*.h']),
+
+  tests = [
+    '//test/grid:grid',
+  ],
+
+  deps = [
+    '//src/disjoint_set:disjoint_set',
+    '//src/region:region',
+  ],
+
+  visibility = ['PUBLIC'],
+)

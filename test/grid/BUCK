@@ -1,0 +1,10 @@
+cxx_test(
+  name = 'grid',
+  srcs = glob(['*.cpp']),
+
+  deps = [
+    '//src/grid:grid',
+  ],
+
+  visibility = ['PUBLIC'],
+)
