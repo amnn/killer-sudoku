@@ -9,6 +9,7 @@ cxx_library(
   ],
 
   deps = [
+    '//src/arena:arena',
     '//src/disjoint_set:disjoint_set',
     '//src/region:region',
   ],

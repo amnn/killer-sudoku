@@ -3,7 +3,7 @@
 #include <istream>
 #include <array>
 
-#include <disjoint_set/Arena.h>
+#include <arena/Arena.h>
 #include <region/Region.h>
 
 namespace grid {
@@ -26,7 +26,7 @@ struct Grid {
 private:
   Cell &cell(uint16_t ix);
 
-  disjoint_set::Arena<Region, RegionCombiner> _arena;
+  Cell::Arena _arena;
   std::array<Cell *, ELEMS> _cells {};
 };
 } // namespace grid

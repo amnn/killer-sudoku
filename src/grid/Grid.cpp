@@ -107,7 +107,7 @@ Cell &Grid::cell(uint16_t ix)
   uint8_t col = ix % WIDTH;
 
   if (!_cells[ix])
-    _cells[ix] = _arena.newSet(Region {row, col});
+    _cells[ix] = _arena.alloc(Region {row, col});
 
   return *_cells[ix];
 }

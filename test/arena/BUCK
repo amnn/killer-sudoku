@@ -1,0 +1,10 @@
+cxx_test(
+  name = 'arena',
+  srcs = glob(['*.cpp']),
+
+  deps = [
+    '//src/arena:arena',
+  ],
+
+  visibility = ['PUBLIC'],
+)

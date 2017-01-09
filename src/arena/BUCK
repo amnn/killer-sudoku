@@ -1,0 +1,11 @@
+cxx_library(
+  name = 'arena',
+  header_namespace = 'arena',
+  exported_headers = glob(['**/*.h']),
+
+  tests = [
+    '//test/arena:arena',
+  ],
+
+  visibility = ['PUBLIC'],
+)
