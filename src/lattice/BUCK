@@ -1,0 +1,16 @@
+cxx_library(
+  name = 'lattice',
+  srcs = glob(['**/*.cpp']),
+  header_namespace = 'lattice',
+  exported_headers = glob(['**/*.h']),
+
+  deps = [
+    '//src/arena:arena',
+  ],
+
+  tests = [
+    '//test/lattice:lattice',
+  ],
+
+  visibility = ['PUBLIC'],
+)

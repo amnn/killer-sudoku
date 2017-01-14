@@ -1,0 +1,10 @@
+cxx_test(
+  name = 'lattice',
+  srcs = glob(['*.cpp']),
+
+  deps = [
+    '//src/lattice:lattice',
+  ],
+
+  visibility = ['PUBLIC'],
+)
