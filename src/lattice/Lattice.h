@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iterator>
+#include <functional>
 #include <type_traits>
 #include <vector>
 
@@ -13,7 +14,9 @@ using namespace detail;
 template <typename R, typename C>
 struct Lattice {
 
-  template <typename SumFn, typename ValFn>
+  using SumFn = std::function<uint32_t(const C &)>;
+  using ValFn = std::function<uint32_t(const R &, const C &)>;
+
   Lattice(std::vector<R> rs, std::vector<C> cs, SumFn sum, ValFn val)
     : _arena {}
     , _rowTags {rs}

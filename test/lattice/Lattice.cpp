@@ -5,31 +5,16 @@ using namespace lattice;
 
 #include <vector>
 
-namespace {
-
-struct ZeroFn {
-  uint32_t operator()(uint8_t) {
-    return 0;
-  }
-};
-
-struct CheckerFn {
-  uint32_t operator()(uint8_t r, uint8_t c) {
-    return (r + c) % 2
-      ? (r + c)
-      : 0;
-  }
-};
-
-} // anonymous namespace
-
 TEST(LatticeTest, Init) {
   std::vector<uint8_t> tags {0, 1, 2, 3, 4};
-
-    ZeroFn sum;
-    CheckerFn val;
-
-    Lattice<uint8_t, uint8_t> lattice(tags, tags, sum, val);
+    Lattice<uint8_t, uint8_t> lattice(
+      tags, tags,
+      [](uint8_t) { return 0; },
+      [](uint8_t r, uint8_t c) {
+        return (r + c) % 2
+          ? (r + c)
+          : 0;
+      });
 
     std::vector< std::vector<uint32_t> >
       vals {{1, 3}, {1, 3, 5}, {3, 5}, {3, 5, 7}, {5, 7}};
