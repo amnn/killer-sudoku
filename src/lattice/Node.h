@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include <arena/Arena.h>
 #include <lattice/NodeIter.h>
@@ -19,21 +20,31 @@ struct Node {
   using Arena = arena::Arena< Node >;
   friend class arena::Arena< Node >;
 
+  HorizRange horizRange();
+  VertRange vertRange();
+
   void hideInRow();
   void showInRow();
-  HorizRange horizRange();
 
   void hideInCol();
   void showInCol();
-  VertRange vertRange();
 
-  inline const Tag &tag() { return _tag; }
-  inline Node *row()      { return r; }
-  inline Node *col()      { return c; }
-  inline Node *north()    { return n; }
-  inline Node *south()    { return s; }
-  inline Node *west()     { return w; }
-  inline Node *east()     { return e; }
+  bool isColSatisfiable() const;
+
+  void hideRow(std::vector<Node *> &hidden);
+
+  std::vector<Node *> pickRow();
+  void unPickRow();
+
+  void showRow();
+
+  const Tag &tag();
+  Node *row();
+  Node *col();
+  Node *north();
+  Node *south();
+  Node *west();
+  Node *east();
 
 private:
 
