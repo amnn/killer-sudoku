@@ -1,0 +1,10 @@
+cxx_test(
+  name = 'reversed',
+  srcs = glob(['*.cpp']),
+
+  deps = [
+    '//src/reversed:reversed',
+  ],
+
+  visibility = ['PUBLIC'],
+)

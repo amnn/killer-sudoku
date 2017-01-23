@@ -1,0 +1,11 @@
+cxx_library(
+  name = 'reversed',
+  header_namespace = 'reversed',
+  exported_headers = glob(['**/*.h']),
+
+  tests = [
+    '//test/reversed:reversed',
+  ],
+
+  visibility = ['PUBLIC'],
+)
