@@ -7,14 +7,17 @@
 #include <vector>
 
 #include <lattice/Node.h>
+#include <reversed/Reversed.h>
 
 namespace lattice {
 
 using namespace detail;
+using namespace reversed;
 
 template <typename R, typename C>
 struct Lattice {
 
+  using Soln  = std::unique_ptr< std::vector<R> >;
   using SumFn = std::function<uint32_t(const C &)>;
   using ValFn = std::function<uint32_t(const R &, const C &)>;
 
@@ -39,6 +42,33 @@ struct Lattice {
           _arena.alloc(&row, &col, nodeVal);
       }
     }
+  }
+
+  Soln solve() {
+    if (_root->west() == _root)
+      return Soln {};
+
+    auto col = _root->west();
+
+    if (!col->isColSatisfiable())
+      return nullptr;
+
+    for (Node &i : col->vertRange()) {
+      auto hidden = i.pickRow();
+
+      if (auto soln = solve()) {
+        auto &part = *reinterpret_cast<R *>(i.row()->tag().for_row.ptr);
+        soln->push_back(part);
+        return soln;
+      }
+
+      for (Node *j : reverse(hidden))
+        j->showRow();
+
+      i.unPickRow();
+    }
+
+    return nullptr;
   }
 
   /* test */ inline Node *root() const { return _root; }

@@ -6,6 +6,7 @@ cxx_library(
 
   deps = [
     '//src/arena:arena',
+    '//src/reversed:reversed',
   ],
 
   tests = [
