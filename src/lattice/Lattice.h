@@ -2,6 +2,7 @@
 
 #include <iterator>
 #include <functional>
+#include <memory>
 #include <type_traits>
 #include <vector>
 
@@ -19,8 +20,8 @@ struct Lattice {
 
   Lattice(std::vector<R> rs, std::vector<C> cs, SumFn sum, ValFn val)
     : _arena {}
-    , _rowTags {rs}
-    , _colTags {cs}
+    , _rowTags {std::move(rs)}
+    , _colTags {std::move(cs)}
     , _root {_arena.alloc()}
   {
     for (const C &c : _colTags)
