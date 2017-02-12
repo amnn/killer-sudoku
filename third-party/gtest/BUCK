@@ -4,22 +4,35 @@ GTEST = 'subrepo/googletest'
 GTEST_SRC = path.join(GTEST, 'src')
 GTEST_INC = path.join(GTEST, 'include')
 
+GMOCK = 'subrepo/googlemock'
+GMOCK_SRC = path.join(GMOCK, 'src')
+GMOCK_INC = path.join(GMOCK, 'include')
+
 cxx_library(
   name = 'gtest',
 
   srcs = glob(
-    [path.join(GTEST_SRC, '**/*.cc')],
-    excludes = [path.join(GTEST_SRC, 'gtest-all.cc')],
+    [
+      path.join(GTEST_SRC, '**/*.cc'),
+      path.join(GMOCK_SRC, '**/*.cc'),
+    ],
+    excludes = [
+      path.join(GTEST_SRC, 'gtest-all.cc'),
+      path.join(GMOCK_SRC, 'gmock-all.cc'),
+    ],
   ),
 
   headers = subdir_glob([
     (GTEST, 'src/**/*.h'),
     (GTEST_INC, '**/*.h'),
+    (GMOCK, 'src/**/*.h'),
+    (GMOCK_INC, '**/*.h'),
   ]),
 
   header_namespace = '',
   exported_headers = subdir_glob([
     (GTEST_INC, '**/*.h'),
+    (GMOCK_INC, '**/*.h'),
   ]),
 
   # Not all compilers support <tr1/tuple>, so have gtest use it's
