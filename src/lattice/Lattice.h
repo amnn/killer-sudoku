@@ -46,7 +46,7 @@ struct Lattice {
 
   Soln solve() {
     if (_root->west() == _root)
-      return Soln {};
+      return std::make_unique< std::vector<R> >(0);
 
     auto col = _root->west();
 
