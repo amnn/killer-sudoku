@@ -57,7 +57,7 @@ struct Lattice {
       auto hidden = i.pickRow();
 
       if (auto soln = solve()) {
-        auto &part = *reinterpret_cast<R *>(i.row()->tag().for_row.ptr);
+        auto &part = *reinterpret_cast<const R *>(i.row()->tag().for_row.ptr);
         soln->push_back(part);
         return soln;
       }
