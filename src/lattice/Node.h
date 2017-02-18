@@ -65,6 +65,8 @@ private:
 
   friend struct HNodeIter;
   friend struct VNodeIter;
+  friend struct RHNodeIter;
+  friend struct RVNodeIter;
 };
 
 } // namespace detail

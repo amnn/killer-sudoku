@@ -49,9 +49,8 @@ Node::Node(Node *row, Node *col, uint32_t val)
   };
 }
 
-HorizRange Node::horizRange() { return HorizRange {this->e, this}; }
-VertRange  Node::vertRange()  { return VertRange  {this->s, this}; }
-
+HorizRange Node::horizRange() { return HorizRange {this, this}; }
+VertRange  Node::vertRange()  { return VertRange  {this, this}; }
 
 void Node::hideInRow() { w->e = e; e->w = w; }
 void Node::showInRow() { w->e = this; e->w = this; }

@@ -4,6 +4,7 @@ cxx_test(
 
   deps = [
     '//src/lattice:lattice',
+    '//src/reversed:reversed',
   ],
 
   visibility = ['PUBLIC'],

@@ -22,6 +22,36 @@ bool NodeIter::operator !=(const NodeIter &that) const
 Node &NodeIter::operator *() { return *_curr; }
 Node *NodeIter::operator ->() { return _curr; }
 
+RHNodeIter::RHNodeIter(Node *curr)
+  : NodeIter(curr)
+{}
+
+RHNodeIter &RHNodeIter::operator ++()
+{
+  _curr = _curr->w;
+  return *this;
+}
+
+RHNodeIter RHNodeIter::operator ++(int)
+{
+  return RHNodeIter {_curr->w};
+}
+
+RVNodeIter::RVNodeIter(Node *curr)
+  : NodeIter(curr)
+{}
+
+RVNodeIter &RVNodeIter::operator ++()
+{
+  _curr = _curr->n;
+  return *this;
+}
+
+RVNodeIter RVNodeIter::operator ++(int)
+{
+  return RVNodeIter {_curr->n};
+}
+
 HNodeIter::HNodeIter(Node *curr)
   : NodeIter(curr)
 {}
