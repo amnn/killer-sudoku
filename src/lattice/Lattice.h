@@ -3,6 +3,7 @@
 #include <iterator>
 #include <functional>
 #include <memory>
+#include <sstream>
 #include <type_traits>
 #include <vector>
 
@@ -72,6 +73,35 @@ struct Lattice {
   }
 
   /* test */ inline Node *root() const { return _root; }
+
+  /* debug */ std::string debugDump() const
+  {
+    std::stringstream ss;
+    ss << "Lattice Debug Output:\n";
+
+    for (Node &col : _root->horizRange())
+      ss << col.tag().for_col.sum << ':' << col.val() << '\t';
+    ss << '\n';
+
+    for (Node &row : _root->vertRange()) {
+      auto rr = row.horizRange();
+      auto it = rr.begin();
+      for (Node &col : _root->horizRange()) {
+        if (it == rr.end()) {
+          ss << 'x';
+        } else if (it->col() == &col) {
+          ss << it->val();
+          it++;
+        } else {
+          ss << 0;
+        }
+        ss << '\t';
+      }
+
+      ss << '\n';
+    }
+    return ss.str();
+  }
 
 private:
   Node::Arena _arena;
