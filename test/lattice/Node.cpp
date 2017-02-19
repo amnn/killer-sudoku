@@ -1,3 +1,4 @@
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <lattice/Node.h>
@@ -6,8 +7,13 @@
 
 #include <reversed/Reversed.h>
 
+#include "Helpers.h"
+
 using namespace lattice::detail;
+using namespace lattice::helpers;
 using namespace reversed;
+
+using ::testing::ContainerEq;
 
 TEST(LatticeNodeTest, Root) {
   Node::Arena a;
@@ -105,7 +111,6 @@ TEST(LatticeNodeTest, VertRange) {
   EXPECT_EQ(range.end(), it);
 }
 
-
 TEST(LatticeNodeTest, ReverseVertRange) {
   Node::Arena a;
   auto root = a.alloc();
@@ -122,4 +127,55 @@ TEST(LatticeNodeTest, ReverseVertRange) {
   }
 
   EXPECT_EQ(range.rend(), it);
+}
+
+TEST(LatticeNodeTest, ShowHideInRow) {
+  Node::Arena a;
+  auto root = a.alloc();
+  auto row  = a.alloc(root, nullptr);
+  std::vector<Node *> nodes {};
+
+  for (uint32_t i = 0; i < 4; ++i) {
+    auto col = a.alloc(root, i, nullptr);
+    nodes.push_back(a.alloc(row, col, i));
+  }
+
+  std::vector<uint32_t>
+    all {0, 1, 2, 3},
+    removed {0, 2, 3};
+
+  EXPECT_THAT(rvals(row), ContainerEq(all));
+
+  nodes[1]->hideInRow();
+  EXPECT_THAT(rvals(row), ContainerEq(removed));
+
+  nodes[1]->showInRow();
+  EXPECT_THAT(rvals(row), ContainerEq(all));
+}
+
+TEST(LatticeNodeTest, ShowHideInCol) {
+  Node::Arena a;
+  auto root = a.alloc();
+  auto col  = a.alloc(root, 100u, nullptr);
+  std::vector<Node *> nodes {};
+
+  for (uint32_t i = 0; i < 4; ++i) {
+    auto row = a.alloc(root, nullptr);
+    nodes.push_back(a.alloc(row, col, i));
+  }
+
+  std::vector<uint32_t>
+    all {0, 1, 2, 3},
+    removed {0, 2, 3};
+
+  EXPECT_EQ(col->val(), 6);
+  EXPECT_THAT(cvals(col), ContainerEq(all));
+
+  nodes[1]->hideInCol();
+  EXPECT_EQ(col->val(), 5);
+  EXPECT_THAT(cvals(col), ContainerEq(removed));
+
+  nodes[1]->showInCol();
+  EXPECT_EQ(col->val(), 6);
+  EXPECT_THAT(cvals(col), ContainerEq(all));
 }

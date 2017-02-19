@@ -2,35 +2,17 @@
 #include <gtest/gtest.h>
 
 #include <lattice/Lattice.h>
-using namespace lattice;
 
 #include <vector>
+
+#include "Helpers.h"
+
+using namespace lattice;
+using namespace lattice::helpers;
 
 using ::testing::ContainerEq;
 using ::testing::ElementsAre;
 using ::testing::UnorderedElementsAre;
-
-namespace {
-
-  std::vector< std::vector<uint32_t> > ivals(Node *root)
-  {
-
-    std::vector< std::vector<uint32_t> >
-      vals {};
-
-    for (Node &row : root->vertRange()) {
-      vals.emplace_back();
-      auto &rowVals = vals.back();
-
-      for (Node &node : row.horizRange()) {
-        rowVals.emplace_back(node.val());
-      }
-    }
-
-    return vals;
-  }
-
-} // anonymous namespace
 
 TEST(LatticeTest, Init) {
   Lattice<uint8_t, uint8_t> l(
