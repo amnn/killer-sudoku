@@ -11,7 +11,8 @@ using namespace reversed;
 
 Node::Node()
   : _val {std::numeric_limits<uint32_t>::max()}
-  , _tag {{0}}
+  , _sum {std::numeric_limits<uint32_t>::max()}
+  , _ptr {nullptr}
   , r {this}, c {this}
   , n {this}, s {this}
   , w {this}, e {this}
@@ -19,34 +20,30 @@ Node::Node()
 
 Node::Node(Node *root, const void *ptr)
   : _val {0}
-  , _tag {{0}}
+  , _sum {0}
+  , _ptr {ptr}
   , r {this},    c {root}
   , n {root->n}, s {root}
   , w {this},    e {this}
 {
   showInCol();
-  _tag.for_row = {
-    .ptr = ptr,
-  };
 }
 
 Node::Node(Node *root, uint32_t sum, const void *ptr)
   : _val {0}
-  , _tag {{0}}
+  , _sum {sum}
+  , _ptr {ptr}
   , r {root},    c {this}
   , n {this},    s {this}
   , w {root->w}, e {root}
 {
   showInRow();
-  _tag.for_col = {
-    .ptr    = ptr,
-    .sum    = sum,
-  };
 }
 
 Node::Node(Node *row, Node *col, uint32_t val)
   : _val {val}
-  , _tag {{0}}
+  , _sum {0}
+  , _ptr {nullptr}
   , r {row}, c {col}
   , n {col->n}, s {col}
   , w {row->w}, e {row}
@@ -81,7 +78,7 @@ void Node::showInCol()
 
 bool Node::isColSatisfiable() const
 {
-  return c->_tag.for_col.sum <= c->_val && c->s != c;
+  return c->_sum <= c->_val && c->s != c;
 }
 
 void Node::hideRow()
@@ -108,13 +105,13 @@ std::vector<Node *> Node::pickRow()
   hidden.push_back(r);
 
   for (Node &i : r->horizRange()) {
-    auto &t = i.c->_tag.for_col;
-    t.sum -= i._val;
+    auto &sum = i.c->_sum;
+    sum -= i._val;
 
-    if (!t.sum) i.c->hideInRow();
+    if (!sum) i.c->hideInRow();
 
     for (Node &j : i.c->vertRange())
-      if (j._val > t.sum) {
+      if (j._val > sum) {
         j.hideRow();
         hidden.push_back(&j);
       }
@@ -126,16 +123,17 @@ std::vector<Node *> Node::pickRow()
 void Node::unPickRow()
 {
   for (Node &i : reverse(r->horizRange())) {
-    auto &t = i.c->_tag.for_col;
+    auto &sum = i.c->_sum;
 
-    if (!t.sum) c->showInRow();
+    if (!sum) c->showInRow();
 
-    t.sum += i._val;
+    sum += i._val;
   }
 }
 
-const uint32_t Node::val() const { return _val; }
-const Tag &    Node::tag() const { return _tag; }
+uint32_t Node::val() const { return _val; }
+uint32_t Node::sum() const { return _sum; }
+const void * Node::ptr() const { return _ptr; }
 
 Node *Node::row()      { return r; }
 Node *Node::col()      { return c; }

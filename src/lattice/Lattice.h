@@ -36,8 +36,8 @@ struct Lattice {
 
       for (Node &col : _root->horizRange()) {
         uint32_t nodeVal =
-          val(*reinterpret_cast<const R *>(row.tag().for_row.ptr),
-              *reinterpret_cast<const C *>(col.tag().for_col.ptr));
+          val(*reinterpret_cast<const R *>(row.ptr()),
+              *reinterpret_cast<const C *>(col.ptr()));
 
         if (nodeVal > 0)
           _arena.alloc(&row, &col, nodeVal);
@@ -58,7 +58,7 @@ struct Lattice {
       auto hidden = i.pickRow();
 
       if (auto soln = solve()) {
-        auto &part = *reinterpret_cast<const R *>(i.row()->tag().for_row.ptr);
+        auto &part = *reinterpret_cast<const R *>(i.row()->ptr());
         soln->push_back(part);
         return soln;
       }
@@ -80,7 +80,7 @@ struct Lattice {
     ss << "Lattice Debug Output:\n";
 
     for (Node &col : _root->horizRange())
-      ss << col.tag().for_col.sum << ':' << col.val() << '\t';
+      ss << col.sum() << ':' << col.val() << '\t';
     ss << '\n';
 
     for (Node &row : _root->vertRange()) {

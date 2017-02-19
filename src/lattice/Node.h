@@ -9,11 +9,6 @@
 namespace lattice {
 namespace detail {
 
-struct Tag {
-  struct { const void *ptr; uint32_t sum; } for_col;
-  struct { const void *ptr; } for_row;
-};
-
 struct Node {
 
   using Arena = arena::Arena< Node >;
@@ -36,8 +31,10 @@ struct Node {
   std::vector<Node *> pickRow();
   void unPickRow();
 
-  const uint32_t val() const;
-  const Tag &tag() const;
+  uint32_t val() const;
+  uint32_t sum() const;
+  const void *ptr() const;
+
   Node *row();
   Node *col();
   Node *north();
@@ -60,7 +57,8 @@ private:
   Node(Node *row, Node *col, uint32_t val);
 
   uint32_t _val;
-  Tag _tag;
+  uint32_t _sum;
+  const void *_ptr;
   Node *r, *c, *n, *s, *w, *e;
 
   friend struct HNodeIter;
