@@ -5,12 +5,31 @@
 #include <sstream>
 #include <stdexcept>
 
+#include <lattice/Lattice.h>
+
 namespace grid {
 
 using namespace region;
 
 namespace {
-  enum Dir { U, D, L, R };
+enum struct Dir : uint8_t { U, D, L, R };
+
+enum struct LColType : uint8_t { Row, Col, Box, Cell, Rgn };
+
+struct LatticeCol {
+  const LColType type;
+  union {
+    struct { uint8_t row, col; };
+    struct { uint8_t ix, elem; };
+    struct { const Region * region; };
+  };
+};
+
+struct LatticeRow {
+  uint8_t row, col, elem;
+};
+
+using SolnSpace = lattice::Lattice<LatticeRow, LatticeCol>;
 } // anonymous namespace
 
 Grid Grid::fromStream(std::istream &is)
@@ -21,10 +40,10 @@ Grid Grid::fromStream(std::istream &is)
   auto nbr = [&ix, &g](Dir dir) -> Cell & {
     int16_t to;
     switch (dir) {
-    case U: to = ix - WIDTH; break;
-    case D: to = ix + WIDTH; break;
-    case L: to = ix - 1; break;
-    case R: to = ix + 1; break;
+      case Dir::U: to = ix - WIDTH; break;
+      case Dir::D: to = ix + WIDTH; break;
+      case Dir::L: to = ix - 1; break;
+      case Dir::R: to = ix + 1; break;
     }
 
     if (to < 0 || ELEMS <= to) {
@@ -57,28 +76,28 @@ Grid Grid::fromStream(std::istream &is)
     }
 
     switch (c) {
-    case '^': nbr(U) += g.cell(ix++); break;
-    case 'v': nbr(D) += g.cell(ix++); break;
-    case '<': nbr(L) += g.cell(ix++); break;
-    case '>': nbr(R) += g.cell(ix++); break;
+      case '^': nbr(Dir::U) += g.cell(ix++); break;
+      case 'v': nbr(Dir::D) += g.cell(ix++); break;
+      case '<': nbr(Dir::L) += g.cell(ix++); break;
+      case '>': nbr(Dir::R) += g.cell(ix++); break;
 
-    case '.':
-      ix++;
-      break;
+      case '.':
+        ix++;
+        break;
 
-    case ' ':
-    case '\n':
-    case '\r':
-    case '\t':
-      break;
+      case ' ':
+      case '\n':
+      case '\r':
+      case '\t':
+        break;
 
-    default: {
-      std::stringstream ss;
-      ss << "Invalid character '" << c << "'"
-         << " near row " << ix / WIDTH << ","
-         << " column " << ix % WIDTH;
-      throw std::invalid_argument(ss.str());
-    }
+      default: {
+        std::stringstream ss;
+        ss << "Invalid character '" << c << "'"
+           << " near row " << ix / WIDTH << ","
+           << " column " << ix % WIDTH;
+        throw std::invalid_argument(ss.str());
+      }
     }
   }
 
