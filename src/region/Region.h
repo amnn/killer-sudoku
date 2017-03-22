@@ -59,7 +59,4 @@ namespace region {
         : y;
     }
   };
-
-  using RegionSet = disjoint_set::Set<Region, RegionCombiner>;
-
 }
