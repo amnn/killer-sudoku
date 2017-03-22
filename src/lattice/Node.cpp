@@ -125,7 +125,7 @@ void Node::unPickRow()
   for (Node &i : reverse(r->horizRange())) {
     auto &sum = i.c->_sum;
 
-    if (!sum) c->showInRow();
+    if (!sum) i.c->showInRow();
 
     sum += i._val;
   }
