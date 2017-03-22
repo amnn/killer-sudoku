@@ -2,6 +2,7 @@
 
 #include <iterator>
 #include <functional>
+#include <limits>
 #include <memory>
 #include <sstream>
 #include <type_traits>
@@ -51,11 +52,24 @@ struct Lattice {
     }
   }
 
-  Soln solve() {
-    if (_root->west() == _root)
-      return std::make_unique< std::vector<R> >(0);
+  Node *minColByGap() const {
+    auto minGap = std::numeric_limits<int32_t>::max();
+    Node *minCol = _root;
+    for (Node &c : _root->horizRange()) {
+      int32_t gap = c.val() - c.sum();
+      if (gap < minGap) {
+        minGap = gap;
+        minCol = &c;
+      }
+    }
+    return minCol;
+  }
 
-    auto col = _root->west();
+  Soln solve() {
+    auto col = minColByGap();
+
+    if (col == _root)
+      return std::make_unique< std::vector<R> >(0);
 
     if (!col->isColSatisfiable())
       return nullptr;
