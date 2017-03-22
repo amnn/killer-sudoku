@@ -39,6 +39,12 @@ struct Lattice {
           val(*reinterpret_cast<const R *>(row.ptr()),
               *reinterpret_cast<const C *>(col.ptr()));
 
+        if (nodeVal > col.sum()) {
+          // This whole row will never be satisfiable.
+          row.hideRow();
+          break;
+        }
+
         if (nodeVal > 0)
           _arena.alloc(&row, &col, nodeVal);
       }
