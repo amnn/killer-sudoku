@@ -2,4 +2,8 @@ cxx_binary(
   name = 'kss',
   srcs = glob(['**/*.cpp']),
   headers = glob(['**/*.h']),
+
+  deps = [
+    '//src/grid:grid',
+  ]
 )

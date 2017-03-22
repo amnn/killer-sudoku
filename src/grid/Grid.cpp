@@ -120,6 +120,120 @@ const region::Region &Grid::region(uint16_t ix)
   return **cell(ix).find();
 }
 
+Grid::Soln Grid::solve() {
+  std::vector<LatticeRow> rows;
+  std::vector<LatticeCol> cols;
+
+  // Construct Row headers
+  for (uint8_t r = 0; r < 9; ++r)
+    for (uint8_t c = 0; c < 9; ++c)
+      for (uint8_t e = 1; e <= 9; ++e)
+        rows.push_back({.row = r, .col = c, .elem = e});
+
+  // Construct Column headers for regions.
+  {
+    std::unordered_set<const Region *> seen;
+    for (uint8_t r = 0; r < 9; ++r)
+      for (uint8_t c = 0; c < 9; ++c) {
+        const Region * rgn = &region(r, c);
+        if (rgn->isConstrained && !seen.count(rgn)) {
+          seen.insert(rgn);
+          LatticeCol lc { .type = LColType::Rgn };
+          lc.region = rgn;
+          cols.push_back(lc);
+        }
+      }
+  }
+
+  // Construct Column headers for individual cells.
+  for (uint8_t r = 0; r < 9; ++r)
+    for (uint8_t c = 0; c < 9; ++c) {
+      LatticeCol cellLC { .type = LColType::Cell };
+      cellLC.row = r;
+      cellLC.col = c;
+      cols.push_back(cellLC);
+    }
+
+  // Construct Column headers for normal sudoku constraints.
+  for (uint8_t i = 0; i < 9; ++i)
+    for (uint8_t e = 1; e <= 9; ++e) {
+      LatticeCol rowLC { .type = LColType::Row };
+      rowLC.ix = i;
+      rowLC.elem = e;
+      cols.push_back(rowLC);
+
+      LatticeCol colLC { .type = LColType::Col };
+      colLC.ix = i;
+      colLC.elem = e;
+      cols.push_back(colLC);
+
+      LatticeCol boxLC { .type = LColType::Box };
+      boxLC.ix = i;
+      boxLC.elem = e;
+      cols.push_back(boxLC);
+    }
+
+  SolnSpace ss(
+    rows,
+    cols,
+    [](LatticeCol c) -> uint16_t {
+      switch (c.type) {
+      case LColType::Rgn:
+        return c.region->constraint;
+      default:
+        return 1u;
+      }
+    },
+    [this](LatticeRow r, LatticeCol c) {
+      switch (c.type) {
+        case LColType::Rgn: {
+          const Region * rgn = &region(r.row, r.col);
+          return rgn == c.region ? r.elem : 0;
+        }
+        case LColType::Row: {
+          return r.row == c.ix && r.elem == c.elem ? 1 : 0;
+        }
+        case LColType::Col: {
+          return r.col == c.ix && r.elem == c.elem ? 1 : 0;
+        }
+        case LColType::Box: {
+          uint8_t br  = r.row / 3;
+          uint8_t bc  = r.col / 3;
+          uint8_t bix = br * 3 + bc;
+
+          return c.ix == bix && r.elem == c.elem ? 1 : 0;
+        }
+        case LColType::Cell: {
+          return c.row == r.row && c.col == r.col ? 1 : 0;
+        }
+      }
+    });
+
+  auto latticeSoln = ss.solve();
+
+  if (!latticeSoln) return nullptr;
+
+  Grid::Soln soln {new std::array<uint8_t, ELEMS>()};
+  for (uint16_t i = 0; i < ELEMS; ++i)
+    soln->at(i) = 0;
+
+  for (auto entry : *latticeSoln) {
+    uint16_t ix = entry.row * WIDTH + entry.col;
+    auto &row = soln->at(ix);
+    if (row != 0) {
+      std::stringstream stream;
+      stream
+        << "Invalid solution! " << entry.elem << " overwriting " << row
+        << " @ (" << entry.col << ", " << entry.row << ")";
+      throw std::runtime_error(stream.str());
+    }
+
+    row = entry.elem;
+  }
+
+  return soln;
+}
+
 Cell &Grid::cell(uint16_t ix)
 {
   uint8_t row = ix / WIDTH;
